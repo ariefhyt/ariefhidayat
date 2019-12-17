@@ -1,159 +1,151 @@
-var Base64 = {
-    _keyStr: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=",
-    encode: function (input) {
-        var output = "";
-        var chr1, chr2, chr3, enc1, enc2, enc3, enc4;
-        var i = 0;
-        input = Base64._utf8_encode(input);
-        while (i < input.length) {
-            chr1 = input.charCodeAt(i++);
-            chr2 = input.charCodeAt(i++);
-            chr3 = input.charCodeAt(i++);
-            enc1 = chr1 >> 2;
-            enc2 = ((chr1 & 3) << 4) | (chr2 >> 4);
-            enc3 = ((chr2 & 15) << 2) | (chr3 >> 6);
-            enc4 = chr3 & 63;
-            if (isNaN(chr2)) {
-                enc3 = enc4 = 64;
-            } else if (isNaN(chr3)) {
-                enc4 = 64;
-            }
-            output = output + this._keyStr.charAt(enc1) + this._keyStr.charAt(enc2) + this._keyStr.charAt(enc3) + this._keyStr.charAt(enc4);
-        }
-        return output;
-    },
-    decode: function (input) {
-        var output = "";
+<!--
+/*
+* Copyright Laura Taylor
+* (https://github.com/techstreams/TSCron)
+*
+* Permission is hereby granted, free of charge, to any person obtaining a copy
+* of this software and associated documentation files (the "Software"), to deal
+* in the Software without restriction, including without limitation the rights
+* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+* copies of the Software, and to permit persons to whom the Software is
+* furnished to do so, subject to the following conditions:
+*
+* The above copyright notice and this permission notice shall be included in all
+* copies or substantial portions of the Software.
+*
+* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+* SOFTWARE.
+ */
+ -->
 
- 
-        var chr1, chr2, chr3;
-        var enc1, enc2, enc3, enc4;
-        var i = 0;
-        input = input.replace(/[^A-Za-z0-9\+\/\=]/g, "");
-        while (i < input.length) {
-            enc1 = this._keyStr.indexOf(input.charAt(i++));
-            enc2 = this._keyStr.indexOf(input.charAt(i++));
-            enc3 = this._keyStr.indexOf(input.charAt(i++));
-            enc4 = this._keyStr.indexOf(input.charAt(i++));
-            chr1 = (enc1 << 2) | (enc2 >> 4);
-            chr2 = ((enc2 & 15) << 4) | (enc3 >> 2);
-            chr3 = ((enc3 & 3) << 6) | enc4;
-            output = output + String.fromCharCode(chr1);
-            if (enc3 != 64) {
-                output = output + String.fromCharCode(chr2);
-            }
-            if (enc4 != 64) {
-                output = output + String.fromCharCode(chr3);
-            }
-        }
-        output = Base64._utf8_decode(output);
-        return output;
-    },
-    _utf8_encode: function (string) {
-        string = string.replace(/\r\n/g, "\n");
-        var utftext = "";
-        for (var n = 0; n < string.length; n++) {
-            var c = string.charCodeAt(n);
-            if (c < 128) {
-                utftext += String.fromCharCode(c);
-            } else if ((c > 127) && (c < 2048)) {
-                utftext += String.fromCharCode((c >> 6) | 192);
-                utftext += String.fromCharCode((c & 63) | 128);
-            } else {
-                utftext += String.fromCharCode((c >> 12) | 224);
-                utftext += String.fromCharCode(((c >> 6) & 63) | 128);
-                utftext += String.fromCharCode((c & 63) | 128);
-            }
-        }
-        return utftext;
-    },
-    _utf8_decode: function (utftext) {
-        var string = "";
-        var i = 0;
-        var c = c1 = c2 = 0;
-        while (i < utftext.length) {
-            c = utftext.charCodeAt(i);
-            if (c < 128) {
-                string += String.fromCharCode(c);
-                i++;
-            } else if ((c > 191) && (c < 224)) {
-                c2 = utftext.charCodeAt(i + 1);
-                string += String.fromCharCode(((c & 31) << 6) | (c2 & 63));
-                i += 2;
-            } else {
-                c2 = utftext.charCodeAt(i + 1);
-                c3 = utftext.charCodeAt(i + 2);
-                string += String.fromCharCode(((c & 15) << 12) | ((c2 & 63) << 6) | (c3 & 63));
-                i += 3;
-            }
-        }
-        return string;
-    }
-}
-var encode = document.getElementById('encode'),
-    decode = document.getElementById('decode'),
-    output = document.getElementById('output'),
-    input = document.getElementById('input');
-var User_ID = "";
-var protected_links = "";
-var a_to_va = 0;
-var a_to_vb = 0;
-
- 
-var a_to_vc = "";
-
-function auto_safelink() {
-    auto_safeconvert();
-}
-
-function auto_safeconvert() {
-    var a_to_vd = window.location.hostname;
-    if (protected_links != "" && !protected_links.match(a_to_vd)) {
-        protected_links += ", " + a_to_vd;
-    } else if (protected_links == "") {
-        protected_links = a_to_vd;
-    }
-    var a_to_ve = "";
-    var a_to_vf = new Array();
-    var a_to_vg = 0;
-    a_to_ve = document.getElementsByTagName("a");
-    a_to_va = a_to_ve.length;
-    a_to_vf = a_to_fa();
-    a_to_vg = a_to_vf.length;
-    var a_to_vh = false;
-    var j = 0;
-    var a_to_vi = "";
-    for (var i = 0; i < a_to_va; i++) {
-        a_to_vh = false;
-        j = 0;
-        while (a_to_vh == false && j < a_to_vg) {
-            a_to_vi = a_to_ve[i].href;
-            if (a_to_vi.match(a_to_vf[j]) || !a_to_vi || !a_to_vi.match("http")) {
-                a_to_vh = true;
-            }
-            j++;
-        }
-        if (a_to_vh == false) {
-            var encryptedUrl = Base64.encode(a_to_vi);
-            a_to_ve[i].href = "https://purwokertostudent.blogspot.com/p/download.html?url=" + encryptedUrl;
-            a_to_ve[i].rel = "nofollow";
-            a_to_vb++;
-            a_to_vc += i + ":::" + a_to_ve[i].href + "\n";
-        }
-    }
-    var a_to_vj = document.getElementById("anonyminized");
-    var a_to_vk = document.getElementById("found_links");
-    if (a_to_vj) {
-        a_to_vj.innerHTML += a_to_vb;
-    }
-    if (a_to_vk) {
-        a_to_vk.innerHTML += a_to_va;
- }
-}
-
-function a_to_fa() {
-    var a_to_vf = new Array();
-    protected_links = protected_links.replace(" ", "");
-    a_to_vf = protected_links.split(",");
-    return a_to_vf;
-}
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>TSCron</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
+    <style>
+      .list-group-item {
+         padding: 0 0;
+         border: 5px solid rgba(0,0,0,.125);
+      }
+      .note {
+        font-size: 70%;
+        font-weight: 400;
+      }
+      .badge-past {
+         background-color:  #929496;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-sm-1"></div>
+          <div class="col-sm-10">
+            <div class="card card-outline-secondary mb-3 text-center">
+              <div class="card-header">
+                <h3 class="card-title">Cron Scheduler</h3>
+              </div>
+              <div class="card-block">
+                <ul class="list-group list-group-flush">
+                   <li class="list-group-item">
+                      <? if (display.enabled) { ?>
+                      <p><strong>Mode:</strong> &nbsp; <strong><span class="badge badge-success">Enabled</span></strong></p>
+                            <? if (display.scheduled) { ?>
+                            <p><strong>Status:</strong> &nbsp; <strong><span class="badge badge-warning">Scheduled</span></strong></p>
+                            <? } else if (display.running) { ?>
+                            <p><strong>Status:</strong> &nbsp; <strong><span class="badge badge-success">Running</span></strong></p>
+                            <? } else { ?>
+                            <p><strong>Status:</strong> &nbsp; <strong><span class="badge badge-danger">Not Running</span></strong></p>
+                            <br>
+                            <p class="text-info">Submit a response to the form to start the Cron Scheduler.<br><br><em>If you've recently submitted a form response and the Cron Scheduler Status does not show 'Scheduled' or 'Running', please wait a couple minutes before reopening this sidebar.</em></p>
+                            <? } ?>
+                            <? if (display.schedule) { ?>
+                            <p><strong>Run<?!= display.schedule.every == 'Custom' ? "" : " Every" ?>:</strong> &nbsp;<strong><span class="badge badge-primary"><?!= display.schedule.every ?></span></strong></p>
+                               <? if (display.schedule.near) { ?>
+                               <p><strong>Near:</strong> &nbsp;<strong><span class="badge badge-primary"><?!= display.schedule.near ?></span></strong></p>
+                               <? } ?>
+                            <br><br>
+                            <? } ?>
+                      <? } else { ?>
+                      <p><strong>Mode:</strong> &nbsp; <strong><span class="badge badge-danger">Disabled</span></strong></p>
+                      <br>
+                      <p class="text-info">Enable Cron Scheduler using the form's <br><strong>TSCron &gt; Configure</strong><br> add-ons menu</p>
+                      <? } ?>
+                   </li>
+                   <? if (display.enabled) { ?>
+                     <? if (display.running && display.last) { ?>
+                         <li class="list-group-item">
+                            <p><strong>Last Run On:</strong></p>
+                            <p>
+                               <strong><span class="badge badge-success"><?!= display.last ?></span></strong>
+                            </p>
+                         </li>
+                      <? } ?>
+                      <? if (display.running && display.next) { ?>
+                         <li class="list-group-item">
+                            <p><strong>Next Scheduled On:</strong></p>
+                            <p>
+                               <strong><span class="badge badge-primary"><?!= display.next ?></span></strong>
+                               <br>
+                               <span class="note"><em>Actual time may vary +/- 15 minutes</em></span>
+                            </p>
+                         </li>
+                      <? } ?>
+                      <? if (display.scheduled) { ?>
+                         <li class="list-group-item">
+                            <p><strong>Start Date:</strong></p>
+                            <p>
+                               <strong><span class="badge badge-warning"><?!= display.schedule.start ?></span></strong>
+                               <br>
+                               <span class="note"><em>Actual time may vary +/- 15 minutes</em></span>
+                            </p>
+                         </li>
+                      <? } else { ?>
+                         <? if (display.running) { ?>
+                            <li class="list-group-item">
+                               <p><strong>Start Date:</strong></p>
+                               <p>
+                                  <strong><span class="badge badge-success"><?!= display.schedule.start ?></span></strong>
+                               </p>
+                            </li>
+                         <? } ?>
+                      <? } ?>
+                      <? if (display.end) { ?>
+                         <li class="list-group-item">
+                            <p><strong>End Date:</strong></p>
+                            <p>
+                               <strong><span class="badge badge-danger"><?!= display.schedule.end ?></span></strong>
+                               <br>
+                               <span class="note"><em>Actual time may vary +/- 15 minutes</em></span>
+                            </p>
+                         </li>
+                      <? }  ?>
+                      <? if (display.created) { ?>
+                         <li class="list-group-item">
+                            <p><strong>Created On:</strong></p>
+                            <p><strong><span class="badge badge-past"><?!= display.created ?></span></strong></p>
+                         </li>
+                      <? } ?>
+                   <? } ?>
+                </ul>
+              </div>
+              <div class="card-footer text-muted">
+                <small class="text-muted"><em><a href="https://github.com/TSCron" target="__blank">TSCron</a> - a Google Form Cron Scheduler powered by Google Apps Script</em></small>
+              </div>
+            </div>
+          </div>
+        <div class="col-sm-1"></div>
+      </div>
+    </div>
+  </body>
+</html>
